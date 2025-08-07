@@ -19,10 +19,10 @@ app.use(express.json()); // Permite que o servidor entenda requisições com cor
 // 3. CONFIGURAÇÃO DA CONEXÃO COM O BANCO DE DADOS
 // Altere os dados abaixo para corresponder à sua configuração do PostgreSQL
 const pool = new Pool({
-    user: 'postgres',       // Seu usuário do PostgreSQL
+    user: 'sigshow_user',
     host: 'localhost',
-    database: 'sigshow', // O nome do seu banco de dados
-    password: 'admin',  // Sua senha do PostgreSQL
+    database: 'sigshow_db', // Mantenha o nome da sua base de dados
+    password: 'admin',      // A sua senha
     port: 5432,
 });
 
