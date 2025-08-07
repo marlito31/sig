@@ -6,58 +6,46 @@
     
     <title>SigShow - Seus Eventos no Mapa</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- ESTILOS (CSS) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" /> 
-    <link rel="stylesheet" href="css/leaflet-search.css" />
-    <link rel="stylesheet" href="css/leaflet.awesome-markers.css"/>
-    <link rel="stylesheet" href="css/leaflet.groupedlayercontrol.min.css"/>
-    <link rel="stylesheet" href="css/Leaflet.Coordinates-0.1.5.css"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    
+    <!-- Plugins Leaflet CSS (Atualizado para usar CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.9.9/dist/leaflet-search.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.groupedlayercontrol@0.6.1/dist/leaflet.groupedlayercontrol.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.coordinates@0.1.5/dist/Leaflet.Coordinates-0.1.5.css" />
 
+    <!-- CSS Customizado -->
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .main-content {
-            flex-grow: 1;
-            position: relative;
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-        .offcanvas-bottom {
-            height: 60vh;
-        }
+        body, html { height: 100%; margin: 0; padding: 0; display: flex; flex-direction: column; }
+        .main-content { flex-grow: 1; position: relative; }
+        #map { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
 
+<!-- BARRA DE NAVEGAÇÃO -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <i class="fas fa-map-marker-alt"></i> SigShow
-        </a>
-        <button class="btn btn-secondary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFilters" aria-controls="offcanvasFilters">
+        <a class="navbar-brand" href="#"><i class="fas fa-map-marker-alt"></i> SigShow</a>
+        <button class="btn btn-secondary me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFilters">
             <i class="fas fa-filter"></i> Filtros
         </button>
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-                <a class="btn btn-primary" href="#">Entrar</a>
-            </li>
-        </ul>
+        <div id="auth-section" class="ms-auto">
+            <!-- O botão de login será substituído aqui após o login -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Entrar</button>
+        </div>
     </div>
 </nav>
 
+<!-- CONTEÚDO PRINCIPAL (MAPA) -->
 <main class="main-content">
     <div id="map"></div>
 </main>
 
-
+<!-- FILTROS (OFFCANVAS) -->
 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFilters" aria-labelledby="offcanvasFiltersLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasFiltersLabel">Filtros</h5>
@@ -94,6 +82,33 @@
 </div>
 
 
+<!-- MODAL DE LOGIN -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel">Acesso Restrito</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="loginForm">
+          <div class="mb-3">
+            <label for="loginNome" class="form-label">Nome de Usuário</label>
+            <input type="text" class="form-control" id="loginNome" required>
+          </div>
+          <div class="mb-3">
+            <label for="loginSenha" class="form-label">Senha</label>
+            <input type="password" class="form-control" id="loginSenha" required>
+          </div>
+          <div id="login-error-message" class="alert alert-danger d-none" role="alert"></div>
+          <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PARA DETALHES DO EVENTO -->
 <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -110,20 +125,104 @@
 </div>
 
 
+<!-- SCRIPTS (JAVASCRIPT) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
-<script src="js/leaflet-search.js"></script>
-<script src="js/leaflet.awesome-markers.js"></script>
-<script src="js/leaflet.groupedlayercontrol.min.js"></script>
-<script src="js/Leaflet.Coordinates-0.1.5.min.js"></script>
+
+<!-- Plugins Leaflet JS (Atualizado para usar CDN) -->
+<script src="https://unpkg.com/leaflet-search@2.9.9/dist/leaflet-search.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
+<script src="https://unpkg.com/leaflet.groupedlayercontrol@0.6.1/dist/leaflet.groupedlayercontrol.min.js"></script>
+<script src="https://unpkg.com/leaflet.coordinates@0.1.5/dist/Leaflet.Coordinates-0.1.5.min.js"></script>
+<!-- O ficheiro L.Geoserver.js não tem um CDN comum, certifique-se que ele está na pasta 'js/' -->
 <script src="js/L.Geoserver.js"></script>
+
 
 <script>
     // ===================================================================
-    // ================ CÓDIGO LEAFLET - MODIFICADO ======================
+    // ================ LÓGICA DE AUTENTICAÇÃO (NOVO) ====================
     // ===================================================================
-    
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('login-error-message');
+    const authSection = document.getElementById('auth-section');
+
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Impede o recarregamento da página
+        loginError.classList.add('d-none'); // Esconde mensagem de erro antiga
+
+        const nome = document.getElementById('loginNome').value;
+        const senha = document.getElementById('loginSenha').value;
+
+        try {
+            // Faz a requisição para o seu backend na porta 3000
+            const response = await fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nome, senha }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Se a resposta não for 2xx, mostra o erro
+                throw new Error(data.message || 'Erro ao tentar fazer login.');
+            }
+            
+            // Se o login for bem-sucedido:
+            // 1. Salva o token no localStorage do navegador
+            localStorage.setItem('sigshow_token', data.token);
+            localStorage.setItem('sigshow_user', JSON.stringify(data.user));
+
+            // 2. Fecha o modal
+            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            loginModal.hide();
+
+            // 3. Atualiza a UI para mostrar o estado "logado"
+            updateUIForLoggedInUser(data.user);
+
+        } catch (error) {
+            loginError.textContent = error.message;
+            loginError.classList.remove('d-none');
+        }
+    });
+
+    function updateUIForLoggedInUser(user) {
+        authSection.innerHTML = `
+            <span class="navbar-text text-white me-3">
+                Olá, ${user.nome}! (${user.type})
+            </span>
+            <button class="btn btn-danger" onclick="logout()">Sair</button>
+        `;
+        // TODO: Aqui você pode adicionar botões de "Adicionar Evento", etc.
+    }
+
+    function logout() {
+        // Limpa os dados de sessão do localStorage
+        localStorage.removeItem('sigshow_token');
+        localStorage.removeItem('sigshow_user');
+
+        // Restaura a UI para o estado "deslogado"
+        authSection.innerHTML = `
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Entrar</button>
+        `;
+        // TODO: Esconder botões de admin/organizador
+    }
+
+    // Verifica se já existe um usuário logado quando a página carrega
+    document.addEventListener('DOMContentLoaded', () => {
+        const user = localStorage.getItem('sigshow_user');
+        if (user) {
+            updateUIForLoggedInUser(JSON.parse(user));
+        }
+    });
+
+
+    // ===================================================================
+    // ================ CÓDIGO LEAFLET (COMPLETO) ========================
+    // ===================================================================
     var mbUrl2 = 'http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
     var mapasatelite = L.tileLayer(mbUrl2, {subdomains:['mt0','mt1','mt2','mt3'], maxZoom: 20});
     var maparua = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -134,7 +233,6 @@
     // Ícones
     var vendasIcon = L.AwesomeMarkers.icon({ icon: 'shopping-cart', prefix: 'fa', markerColor: 'green' });
     var eventosIcon = L.AwesomeMarkers.icon({ icon: 'calendar-alt', prefix: 'fa', markerColor: 'red' });
-    // O ícone para estabelecimentos foi REMOVIDO daqui
 
     // Camadas
     var local_vendas = L.geoJSON(null, {
@@ -146,10 +244,8 @@
         pointToLayer: (feature, latlng) => L.marker(latlng, { icon: eventosIcon }),
         onEachFeature: onFeatureClickShowModal
     });
-    
-    // A definição da camada geoJSON para estabelecimentos foi REMOVIDA daqui
 
-    // Função para Modal (permanece igual)
+    // Função para Modal
     function onFeatureClickShowModal(feature, layer) {
         layer.on('click', function () {
             var modal = new bootstrap.Modal(document.getElementById('eventModal'));
@@ -171,7 +267,7 @@
         });
     }
 
-    // Função para carregar WFS (permanece igual)
+    // Função para carregar WFS
     function carregarCamadaWFS(layerName, layerGroup) {
         var geoserverUrl = "http://localhost:8080/geoserver/ne/ows";
         var params = { service: 'WFS', version: '1.0.0', request: 'GetFeature', typeName: layerName, outputFormat: 'application/json' };
@@ -186,7 +282,6 @@
     // Carregamento das camadas
     carregarCamadaWFS("ne:local_venda", local_vendas);
     carregarCamadaWFS("ne:evento", eventos);
-    // A chamada para carregar estabelecimentos foi REMOVIDA daqui
 
     // Inicialização do Mapa
     var map = L.map('map', {
@@ -205,7 +300,6 @@
         "<b>Camadas</b>": {
             "<b>Locais de Venda</b>": local_vendas,
             "<b>Eventos</b>": eventos
-            // A camada de Estabelecimentos Fixos foi REMOVIDA daqui
         }
     };
     
